@@ -1,0 +1,44 @@
+from PIL import Image
+import os
+
+def encrypt_decrypt_image(input_path, output_path, key):
+    """
+    Encrypts or decrypts an image using XOR-based pixel manipulation.
+
+    :param input_path: Path to the input image.
+    :param output_path: Path to save the output image.
+    :param key: Integer key for XOR encryption.
+    """
+    try:
+        image = Image.open(input_path)
+        image = image.convert('RGB')  # Ensure 3 channels
+
+        encrypted_image = Image.new('RGB', image.size)
+        width, height = image.size
+
+        for x in range(width):
+            for y in range(height):
+                r, g, b = image.getpixel((x, y))
+                # Apply XOR with the key
+                r_new = r ^ key
+                g_new = g ^ key
+                b_new = b ^ key
+                encrypted_image.putpixel((x, y), (r_new, g_new, b_new))
+
+        encrypted_image.save(output_path)
+        print(f"Output saved to {output_path}")
+
+    except Exception as e:
+        print("Error:", e)
+
+# Example usage
+if __name__ == "__main__":
+    mode = input("Enter mode (encrypt/decrypt): ").strip().lower()
+    input_path = input("Enter input image path: ").strip()
+    output_path = input("Enter output image path: ").strip()
+    key = int(input("Enter encryption key (0-255): "))
+
+    if not os.path.exists(input_path):
+        print("Input file not found.")
+    else:
+        encrypt_decrypt_image(input_path, output_path, key)
